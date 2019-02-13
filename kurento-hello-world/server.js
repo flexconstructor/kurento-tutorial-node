@@ -24,20 +24,14 @@ var minimist = require('minimist');
 var ws = require('ws');
 var kurento = require('kurento-client');
 var fs    = require('fs');
-var https = require('https');
+var http = require('http');
 
 var argv = minimist(process.argv.slice(2), {
     default: {
-        as_uri: 'https://localhost:8443/',
+        as_uri: 'http://localhost:8443/',
         ws_uri: 'ws://localhost:8888/kurento'
     }
 });
-
-var options =
-{
-  key:  fs.readFileSync('keys/server.key'),
-  cert: fs.readFileSync('keys/server.crt')
-};
 
 var app = express();
 
@@ -67,12 +61,12 @@ var kurentoClient = null;
  */
 var asUrl = url.parse(argv.as_uri);
 var port = asUrl.port;
-var server = https.createServer(options, app).listen(port, function() {
+var server = http.createServer(options, app).listen(port, function() {
     console.log('Kurento Tutorial started');
     console.log('Open ' + url.format(asUrl) + ' with a WebRTC capable browser');
 });
 
-var wss = new ws.Server({
+var ws = new ws.Server({
     server : server,
     path : '/helloworld'
 });
@@ -80,7 +74,7 @@ var wss = new ws.Server({
 /*
  * Management of WebSocket messages
  */
-wss.on('connection', function(ws) {
+ws.on('connection', function(ws) {
     var sessionId = null;
     var request = ws.upgradeReq;
     var response = {
