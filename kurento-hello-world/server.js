@@ -33,6 +33,13 @@ var argv = minimist(process.argv.slice(2), {
     }
 });
 
+var options =
+{
+    host: '127.0.0.1',
+    port: 8444,
+    path: '/'
+};
+
 var app = express();
 
 /*
